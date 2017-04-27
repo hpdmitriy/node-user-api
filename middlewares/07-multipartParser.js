@@ -1,4 +1,6 @@
+
 const busboy = require('co-busboy');
+
 
 module.exports = function* (next) {
   if (!this.request.is('multipart/*')) {
@@ -12,7 +14,6 @@ module.exports = function* (next) {
   let fileStream;
 
   while (fileStream = yield parser) {
-
     this.throw(400, "Files are not allowed here");
   }
   const body = this.request.body;

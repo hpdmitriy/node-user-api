@@ -1,8 +1,8 @@
 'use strict';
 
-if (process.env.TRACE) {
+// if (process.env.TRACE) {
   require('./libs/trace');
-}
+// }
 
 const koa = require('koa');
 const app = koa();
@@ -27,7 +27,7 @@ const router = new Router({
   prefix: '/users'
 });
 
-const User = require('./libs/user');
+const User = require('./models/user');
 
 router
   .param('userById', function*(id, next) {
@@ -44,15 +44,14 @@ router
     yield* next;
   })
   .put('/', function*() {
+    console.log(this.request.body);
     let user = yield User.create(pick(this.request.body, User.publicFields));
-
     this.status = 201;
     this.body = user.toObject();
   })
   .patch('/:userById', function*() {
     Object.assign(this.userById, pick(this.request.body, User.publicFields));
     yield this.userById.save();
-
     this.body = this.userById.toObject();
   })
   .get('/:userById', function*() {
@@ -63,7 +62,7 @@ router
     this.body = 'ok';
   })
   .get('/', function*() {
-    let users = yield User.find({}); // .lean()
+    let users = yield User.find({});
 
     this.body = users.map(user => user.toObject());
   });

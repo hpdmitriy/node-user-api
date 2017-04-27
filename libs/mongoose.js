@@ -1,31 +1,26 @@
 const mongoose = require('mongoose');
+const config = require('config');
 mongoose.Promise = Promise;
 
 const beautifyUnique = require('mongoose-beautiful-unique-validation');
 
 mongoose.plugin(beautifyUnique);
-
-// mongoose.set('debug', true);
+mongoose.set('debug', true);
 
 mongoose.plugin(schema => {
-  if (!schema.options.toObject) {
-    schema.options.toObject = {};
-  }
-
-  if (schema.options.toObject.transform == undefined) {
-    schema.options.toObject.transform = (doc, ret) => { delete ret.__v; return ret; };
-  }
+	if (!schema.options.toObject) {
+		schema.options.toObject = {};
+	}
+	if (schema.options.toObject.transform == undefined) {
+		schema.options.toObject.transform = (doc, ret) => {
+			delete ret.__v;
+			return ret;
+		};
+	}
 
 });
 
 
-mongoose.connect('mongodb://localhost/test', {
-  server: {
-    socketOptions: {
-      keepAlive: 1
-    },
-    poolSize: 5
-  }
-});
+mongoose.connect(config.mongoose.uri, config.mongoose.options);
 
 module.exports = mongoose;
